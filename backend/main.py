@@ -79,8 +79,7 @@ def list_flights(
     conn.close()
 
     if not rows:
-        return {"flights": [], "message": "No flights found matching your criteria"}
-
+        raise HTTPException(status_code=404, detail="No flights found matching your criteria")
     return {"flights": [dict(r) for r in rows]}
 
 
