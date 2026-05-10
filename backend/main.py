@@ -126,7 +126,16 @@ def create_booking(data: BookingCreate):
         raise HTTPException(
             status_code=409, detail=f"Seat {data.seat} is already taken on this flight"
         )
-
+    # Prevent same passport booking same flight twice
+    dup = conn.execute(
+        "SELECT id FROM bookings WHERE flight_id = ? AND passport_number = ? AND status = 'confirmed'",
+        (data.flight_id, data.passport_number),
+    ).fetchone()
+    if dup:
+        conn.close()
+        raise HTTPException(
+            status_code=409, detail="This passenger already has a confirmed booking on this flight"
+        )
     reference = "FH" + uuid.uuid4().hex[:8].upper()
 
     conn.execute(
