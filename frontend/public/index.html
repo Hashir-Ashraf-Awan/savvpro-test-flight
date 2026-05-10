@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlightHub — Flight Search & Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #f0f4ff;
+      --surface:   #ffffff;
+      --card:      #ffffff;
+      --border:    #e2e8f4;
+      --border2:   #d0d8ee;
+      --accent:    #1a56db;
+      --accent2:   #0ea5e9;
+      --accentbg:  #eff4ff;
+      --sky:       #dbeafe;
+      --gold:      #d97706;
+      --text:      #0f172a;
+      --sub:       #334155;
+      --muted:     #64748b;
+      --faint:     #94a3b8;
+      --danger:    #dc2626;
+      --dangerbg:  #fef2f2;
+      --success:   #16a34a;
+      --successbg: #f0fdf4;
+      --warning:   #d97706;
+      --radius:    14px;
+      --shadow:    0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+      --shadow-lg: 0 4px 6px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.1);
+      --mono:      'JetBrains Mono', monospace;
+      --sans:      'Plus Jakarta Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 1px 0 var(--border), 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 8px rgba(26,86,219,0.3);
+    }
+
+    .logo .hub { color: var(--accent); }
+
+    nav { display: flex; gap: 4px; }
+
+    nav button {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    nav button:hover { color: var(--text); background: var(--accentbg); }
+    nav button.active { color: var(--accent); background: var(--accentbg); font-weight: 700; }
+
+    /* ═══════════════════════════════════════════
+       HERO BANNER
+    ═══════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e3a8a 0%, #1a56db 40%, #0ea5e9 100%);
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      padding: 2.5rem 2rem 2.5rem;
+    }
+
+    /* Sky clouds */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse 300px 80px at 20% 60%, rgba(255,255,255,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 200px 50px at 70% 30%, rgba(255,255,255,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 100px at 85% 70%, rgba(255,255,255,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Dot grid overlay */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 8px;
+      font-family: var(--mono);
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.72);
+      font-weight: 500;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .hero-stat .num {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      font-family: var(--mono);
+    }
+
+    .hero-stat .lbl {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.55);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* SVG plane scene */
+    .hero-visual {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      width: 420px;
+    }
+
+    @media (max-width: 768px) { .hero-visual { display: none; } }
+
+    /* ═══════════════════════════════════════════
+       MAIN LAYOUT
+    ═══════════════════════════════════════════ */
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ═══════════════════════════════════════════
+       SECTION HEADER
+    ═══════════════════════════════════════════ */
+    .section-header {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .section-header h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .section-header p {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 3px;
+    }
+
+    /* ═══════════════════════════════════════════
+       SEARCH PANEL
+    ═══════════════════════════════════════════ */
+    .search-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      box-shadow: var(--shadow);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .field label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .field input, .field select {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 10px 13px;
+      transition: all 0.18s;
+      outline: none;
+      width: 100%;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--accent);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+    }
+
+    .field input::placeholder { color: var(--faint); }
+
+    /* ═══════════════════════════════════════════
+       BUTTONS
+    ═══════════════════════════════════════════ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 10px 18px;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(26,86,219,0.25);
+    }
+    .btn-primary:hover { background: #1740b0; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,86,219,0.35); }
+
+    .btn-outline {
+      background: #fff;
+      border: 1.5px solid var(--border2);
+      color: var(--sub);
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: var(--accentbg); }
+
+    .btn-danger {
+      background: var(--dangerbg);
+      border: 1.5px solid #fecaca;
+      color: var(--danger);
+    }
+    .btn-danger:hover { background: #fee2e2; }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(22,163,74,0.25);
+    }
+    .btn-success:hover { background: #15803d; transform: translateY(-1px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text); background: var(--accentbg); border-color: var(--border2); }
+
+    /* ═══════════════════════════════════════════
+       FLIGHT CARDS
+    ═══════════════════════════════════════════ */
+    .flights-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .flight-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.4rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto auto;
+      gap: 1.25rem;
+      align-items: center;
+      transition: all 0.2s;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flight-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .flight-card:hover {
+      border-color: rgba(26,86,219,0.25);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .flight-card:hover::before { opacity: 1; }
+
+    .airline-tag {
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: var(--mono);
+      margin-bottom: 5px;
+      background: var(--accentbg);
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .route {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .city {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    .route-line {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: var(--faint);
+    }
+
+    .route-line .line { flex: 1; height: 1.5px; background: var(--border2); }
+    .route-line .plane-icon { font-size: 15px; }
+
+    .time-info { text-align: center; }
+
+    .dep-time {
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: var(--text);
+    }
+
+    .dep-date {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      margin-top: 2px;
+    }
+
+    .meta-info { text-align: center; }
+
+    .duration {
+      font-size: 0.73rem;
+      font-family: var(--mono);
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .seats-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 0.67rem;
+      font-family: var(--mono);
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    .seats-ok { background: var(--successbg); color: var(--success); border: 1px solid #bbf7d0; }
+    .seats-low { background: #fffbeb; color: var(--warning); border: 1px solid #fde68a; }
+
+    .price-info { text-align: right; }
+
+    .price {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: var(--mono);
+    }
+
+    .price-label {
+      font-size: 0.65rem;
+      color: var(--faint);
+      font-family: var(--mono);
+    }
+
+    /* ═══════════════════════════════════════════
+       CARD (generic)
+    ═══════════════════════════════════════════ */
+    .card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    /* ═══════════════════════════════════════════
+       BOOKING CARDS
+    ═══════════════════════════════════════════ */
+    .booking-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: all 0.2s;
+      box-shadow: var(--shadow);
+    }
+
+    .booking-card:hover { border-color: rgba(26,86,219,0.25); box-shadow: var(--shadow-lg); }
+
+    .booking-ref {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    .booking-passenger { font-size: 0.92rem; font-weight: 700; margin-top: 4px; color: var(--text); }
+
+    .booking-detail {
+      font-size: 0.76rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      margin-top: 6px;
+      line-height: 1.7;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: var(--mono);
+    }
+
+    .status-confirmed { background: var(--successbg); color: var(--success); border: 1px solid #bbf7d0; }
+    .status-cancelled { background: var(--dangerbg); color: var(--danger); border: 1px solid #fecaca; }
+
+    /* ═══════════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.45);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: slideUp 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .modal-subtitle { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
+
+    .modal-close {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .modal-close:hover { background: var(--dangerbg); color: var(--danger); border-color: #fecaca; }
+
+    .form-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 1.25rem;
+    }
+
+    .flight-summary {
+      background: var(--accentbg);
+      border: 1px solid #c7d7fd;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 1.25rem;
+      font-size: 0.79rem;
+      color: var(--sub);
+      line-height: 1.9;
+      font-family: var(--mono);
+    }
+
+    .flight-summary strong { color: var(--accent); }
+
+    /* ═══════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════ */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: var(--mono);
+      animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1), toastOut 0.3s ease 3.7s forwards;
+      max-width: 320px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .toast-success { background: #fff; border: 1.5px solid #bbf7d0; color: var(--success); }
+    .toast-error   { background: #fff; border: 1.5px solid #fecaca; color: var(--danger); }
+    .toast-info    { background: #fff; border: 1.5px solid #c7d7fd; color: var(--accent); }
+
+    @keyframes toastIn  { from { opacity:0; transform: translateX(24px) scale(0.95); } to { opacity:1; transform: none; } }
+    @keyframes toastOut { to { opacity:0; transform: translateX(24px); } }
+
+    /* ═══════════════════════════════════════════
+       MISC
+    ═══════════════════════════════════════════ */
+    .empty-state {
+      text-align: center;
+      padding: 3.5rem 2rem;
+      color: var(--muted);
+      background: #fff;
+      border: 1.5px dashed var(--border2);
+      border-radius: var(--radius);
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .empty-state p { font-size: 0.85rem; line-height: 1.6; }
+
+    .loading {
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+    }
+
+    .result-count {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .booking-search-panel {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      box-shadow: var(--shadow);
+    }
+
+    .cancel-search {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    /* ═══════════════════════════════════════════
+       HERO ONLY on flights tab
+    ═══════════════════════════════════════════ */
+    #hero-block { display: block; }
+    .hero-hidden #hero-block { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">✈</div>
+    Flight<span class="hub">Hub</span>
+  </div>
+  <nav>
+    <button class="active" onclick="switchTab('flights')">Flights</button>
+    <button onclick="switchTab('book')">Book</button>
+    <button onclick="switchTab('bookings')">My Bookings</button>
+    <button onclick="switchTab('cancel')">Cancel</button>
+  </nav>
+</header>
+
+<!-- HERO BANNER -->
+<div id="hero-block">
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">✦ Internal Booking Portal</div>
+      <h1>Find & Book<br>Your Next Flight</h1>
+      <p>Search routes, compare prices, manage bookings — all in one place.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num" id="stat-flights">15</div>
+          <div class="lbl">Routes</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">8</div>
+          <div class="lbl">Airlines</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">Instant</div>
+          <div class="lbl">Confirmation</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SVG Airplane Scene -->
+    <div class="hero-visual">
+      <svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <!-- Sky gradient -->
+        <defs>
+          <linearGradient id="skyGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#bfdbfe" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#e0f2fe" stop-opacity="0.1"/>
+          </linearGradient>
+          <linearGradient id="planeGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#e0e7ff"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Clouds -->
+        <ellipse cx="60" cy="50" rx="45" ry="18" fill="white" opacity="0.15"/>
+        <ellipse cx="90" cy="42" rx="30" ry="14" fill="white" opacity="0.15"/>
+        <ellipse cx="320" cy="30" rx="35" ry="13" fill="white" opacity="0.12"/>
+        <ellipse cx="350" cy="24" rx="25" ry="11" fill="white" opacity="0.12"/>
+        <ellipse cx="180" cy="150" rx="50" ry="16" fill="white" opacity="0.1"/>
+
+        <!-- Flight path dashed line -->
+        <path d="M 30 140 Q 210 20 390 70" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="6,5" fill="none"/>
+
+        <!-- Main airplane body -->
+        <g transform="translate(195,68) rotate(-22)" filter="url(#glow)">
+          <!-- Fuselage -->
+          <ellipse cx="0" cy="0" rx="52" ry="10" fill="url(#planeGrad)" opacity="0.95"/>
+          <!-- Nose -->
+          <path d="M 52 0 Q 68 0 70 2 Q 68 0 52 0" fill="white" opacity="0.9"/>
+          <!-- Tail fin -->
+          <path d="M -48 0 L -55 -22 L -38 0 Z" fill="white" opacity="0.85"/>
+          <!-- Tail fin horizontal -->
+          <path d="M -50 0 L -60 6 L -42 3 Z" fill="white" opacity="0.75"/>
+          <path d="M -50 0 L -60 -6 L -42 -3 Z" fill="white" opacity="0.75"/>
+          <!-- Main wing -->
+          <path d="M 5 0 L -15 -36 L -28 -34 L -18 0 Z" fill="white" opacity="0.9"/>
+          <path d="M 5 0 L -15 36 L -28 34 L -18 0 Z" fill="white" opacity="0.9"/>
+          <!-- Window strip -->
+          <ellipse cx="20" cy="-4" rx="22" ry="3.5" fill="rgba(147,197,253,0.6)"/>
+          <!-- Engine 1 -->
+          <ellipse cx="-5" cy="-18" rx="11" ry="5" fill="rgba(200,220,255,0.8)"/>
+          <!-- Engine 2 -->
+          <ellipse cx="-5" cy="18" rx="11" ry="5" fill="rgba(200,220,255,0.8)"/>
+          <!-- Cockpit windows -->
+          <ellipse cx="52" cy="-3" rx="5" ry="3" fill="rgba(147,197,253,0.7)"/>
+        </g>
+
+        <!-- Small distant plane -->
+        <g transform="translate(340,95) rotate(-15)" opacity="0.5">
+          <ellipse cx="0" cy="0" rx="18" ry="4" fill="white"/>
+          <path d="M -16 0 L -20 -8 L -13 0 Z" fill="white"/>
+          <path d="M 2 0 L -6 -12 L -9 -11 L -6 0 Z" fill="white" opacity="0.8"/>
+          <path d="M 2 0 L -6 12 L -9 11 L -6 0 Z" fill="white" opacity="0.8"/>
+        </g>
+
+        <!-- Contrail for main plane -->
+        <path d="M 148 93 Q 120 105 80 115 Q 50 122 20 128" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M 148 96 Q 115 108 75 120 Q 45 128 15 134" stroke="rgba(255,255,255,0.15)" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+        <!-- Stars/sparkles -->
+        <circle cx="100" cy="80" r="1.5" fill="white" opacity="0.5"/>
+        <circle cx="300" cy="55" r="1" fill="white" opacity="0.4"/>
+        <circle cx="380" cy="120" r="1.5" fill="white" opacity="0.35"/>
+        <circle cx="50" cy="130" r="1" fill="white" opacity="0.4"/>
+        <circle cx="240" cy="160" r="1.5" fill="white" opacity="0.3"/>
+
+        <!-- Ground/horizon silhouette -->
+        <path d="M 0 185 Q 70 170 140 178 Q 210 186 280 175 Q 350 164 420 172 L 420 200 L 0 200 Z" fill="rgba(255,255,255,0.08)"/>
+        <!-- City skyline dots -->
+        <rect x="95" y="173" width="4" height="12" rx="1" fill="rgba(255,255,255,0.2)"/>
+        <rect x="102" y="168" width="4" height="17" rx="1" fill="rgba(255,255,255,0.15)"/>
+        <rect x="109" y="175" width="4" height="10" rx="1" fill="rgba(255,255,255,0.2)"/>
+        <rect x="310" y="170" width="4" height="15" rx="1" fill="rgba(255,255,255,0.15)"/>
+        <rect x="317" y="165" width="5" height="20" rx="1" fill="rgba(255,255,255,0.2)"/>
+        <rect x="325" y="173" width="4" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── TAB: FLIGHTS ── -->
+  <section id="tab-flights" class="section active">
+    <div class="section-header">
+      <div>
+        <h2>Search Flights</h2>
+        <p>Filter by origin, destination, or departure date</p>
+      </div>
+    </div>
+
+    <div class="search-panel">
+      <div class="field">
+        <label>From</label>
+        <input id="s-origin" type="text" placeholder="e.g. Dubai" />
+      </div>
+      <div class="field">
+        <label>To</label>
+        <input id="s-dest" type="text" placeholder="e.g. London" />
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input id="s-date" type="date" />
+      </div>
+      <button class="btn btn-primary" onclick="searchFlights()">🔍 Search</button>
+      <button class="btn btn-ghost" onclick="clearSearch()">Clear</button>
+    </div>
+
+    <div id="flights-result"></div>
+  </section>
+
+  <!-- ── TAB: BOOK ── -->
+  <section id="tab-book" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Book a Flight</h2>
+        <p>Search for a flight on the Flights tab and click Book — or enter a Flight ID directly</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="form-grid">
+        <div class="field">
+          <label>Flight ID</label>
+          <input id="b-flightid" type="number" placeholder="e.g. 1" min="1" />
+        </div>
+        <div class="field">
+          <label>Passenger Full Name</label>
+          <input id="b-name" type="text" placeholder="e.g. Ahmed Hassan" />
+        </div>
+        <div class="field">
+          <label>Passport Number</label>
+          <input id="b-passport" type="text" placeholder="e.g. AK123456" />
+        </div>
+        <div class="field">
+          <label>Seat (e.g. 12A, 3B)</label>
+          <input id="b-seat" type="text" placeholder="e.g. 12A" />
+        </div>
+      </div>
+      <button class="btn btn-success" onclick="submitBooking()">✔ Confirm Booking</button>
+    </div>
+
+    <div id="book-result" style="margin-top:1rem;"></div>
+  </section>
+
+  <!-- ── TAB: BOOKINGS ── -->
+  <section id="tab-bookings" class="section">
+    <div class="section-header">
+      <div>
+        <h2>My Bookings</h2>
+        <p>Look up bookings by passenger name or booking reference</p>
+      </div>
+    </div>
+
+    <div class="booking-search-panel">
+      <div class="field">
+        <label>Passenger Name</label>
+        <input id="bs-name" type="text" placeholder="Search by name..." />
+      </div>
+      <div class="field">
+        <label>Booking Reference</label>
+        <input id="bs-ref" type="text" placeholder="e.g. FH3A9C1D2E" />
+      </div>
+      <button class="btn btn-primary" onclick="findBookings()">🔍 Find</button>
+    </div>
+
+    <div id="bookings-result"></div>
+  </section>
+
+  <!-- ── TAB: CANCEL ── -->
+  <section id="tab-cancel" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Cancel a Booking</h2>
+        <p>Enter your booking reference — the seat will be released immediately</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cancel-search">
+        <div class="field" style="flex:1;min-width:220px;">
+          <label>Booking Reference</label>
+          <input id="c-ref" type="text" placeholder="e.g. FH3A9C1D2E" />
+        </div>
+        <button class="btn btn-danger" onclick="cancelBooking()">✕ Cancel Booking</button>
+      </div>
+    </div>
+
+    <div id="cancel-result" style="margin-top:1rem;"></div>
+  </section>
+
+</main>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Book Flight</div>
+        <div class="modal-subtitle" id="modal-flight-label">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="flight-summary" id="modal-flight-summary"></div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Passenger Full Name</label>
+        <input id="m-name" type="text" placeholder="e.g. Ahmed Hassan" />
+      </div>
+      <div class="field">
+        <label>Passport Number</label>
+        <input id="m-passport" type="text" placeholder="e.g. AK123456" />
+      </div>
+      <div class="field">
+        <label>Seat (e.g. 12A, 3B, 20F)</label>
+        <input id="m-seat" type="text" placeholder="e.g. 12A" />
+      </div>
+    </div>
+    <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="submitModalBooking()">✔ Confirm Booking</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+  const API = "http://localhost:8000";
+  let selectedFlightId = null;
+
+  // ── Tab switching ──────────────────────────────────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    document.getElementById("tab-" + name).classList.add("active");
+
+    const labels = { flights: "Flights", book: "Book", bookings: "My Bookings", cancel: "Cancel" };
+    [...document.querySelectorAll("nav button")]
+      .find(b => b.textContent.trim() === labels[name])?.classList.add("active");
+
+    // Show hero only on flights tab
+    document.getElementById("hero-block").style.display = name === "flights" ? "block" : "none";
+
+    if (name === "flights" && document.getElementById("flights-result").innerHTML === "") {
+      searchFlights();
+    }
+  }
+
+  // ── Toasts ─────────────────────────────────────────────────────────────────
+  function toast(msg, type = "info") {
+    const el = document.createElement("div");
+    el.className = `toast-item toast-${type}`;
+    el.textContent = msg;
+    document.getElementById("toast").appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+
+  // ── Flights ────────────────────────────────────────────────────────────────
+  async function searchFlights() {
+    const origin = document.getElementById("s-origin").value.trim();
+    const dest   = document.getElementById("s-dest").value.trim();
+    const date   = document.getElementById("s-date").value;
+    const cont   = document.getElementById("flights-result");
+
+    cont.innerHTML = `<div class="loading">✈ Searching flights...</div>`;
+
+    const params = new URLSearchParams();
+    if (origin) params.append("origin", origin);
+    if (dest)   params.append("destination", dest);
+    if (date)   params.append("departure_date", date);
+
+    try {
+      const res  = await fetch(`${API}/flights?${params}`);
+      const data = await res.json();
+
+      if (!data.flights || data.flights.length === 0) {
+        cont.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">✈️</div>
+            <p>No flights found for your search.<br>Try different filters or clear the search.</p>
+          </div>`;
+        return;
+      }
+
+      // Update stat
+      document.getElementById("stat-flights").textContent = data.flights.length;
+
+      cont.innerHTML = `<div class="result-count">${data.flights.length} flight(s) found</div>
+        <div class="flights-grid">${data.flights.map(renderFlight).join("")}</div>`;
+    } catch {
+      cont.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">⚠️</div>
+          <p>Could not connect to the API.<br>Make sure the backend is running on port 8000.</p>
+        </div>`;
+    }
+  }
+
+  function clearSearch() {
+    document.getElementById("s-origin").value = "";
+    document.getElementById("s-dest").value   = "";
+    document.getElementById("s-date").value   = "";
+    searchFlights();
+  }
+
+  function renderFlight(f) {
+    const dt    = new Date(f.departure_datetime);
+    const time  = dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const dDate = dt.toLocaleDateString([], { month: "short", day: "numeric" });
+    const hrs   = Math.floor(f.duration_minutes / 60);
+    const mins  = f.duration_minutes % 60;
+    const low   = f.seats_available <= 15;
+    const seatsClass = low ? "seats-low" : "seats-ok";
+
+    return `
+    <div class="flight-card">
+      <div class="route-info">
+        <div class="airline-tag">${f.airline} · ${f.flight_number}</div>
+        <div class="route">
+          <span class="city">${f.origin}</span>
+          <div class="route-line">
+            <div class="line"></div>
+            <span class="plane-icon">✈</span>
+            <div class="line"></div>
+          </div>
+          <span class="city">${f.destination}</span>
+        </div>
+      </div>
+
+      <div class="time-info">
+        <div class="dep-time">${time}</div>
+        <div class="dep-date">${dDate}</div>
+      </div>
+
+      <div class="meta-info">
+        <div class="duration">${hrs}h ${mins}m</div>
+        <div class="seats-badge ${seatsClass}">${f.seats_available} seats left</div>
+      </div>
+
+      <div class="price-info">
+        <div class="price">$${f.price_per_seat.toFixed(0)}</div>
+        <div class="price-label">per seat</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="openBookingModal(${JSON.stringify(f).replace(/"/g, '&quot;')})">Book</button>
+    </div>`;
+  }
+
+  // ── Modal ──────────────────────────────────────────────────────────────────
+  function openBookingModal(flight) {
+    selectedFlightId = flight.id;
+    const dt   = new Date(flight.departure_datetime);
+    const time = dt.toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    document.getElementById("modal-flight-label").textContent =
+      `${flight.origin} → ${flight.destination} · ${flight.flight_number}`;
+    document.getElementById("modal-flight-summary").innerHTML =
+      `<strong>Airline:</strong> ${flight.airline} &nbsp;|&nbsp; <strong>Departs:</strong> ${time}<br>
+       <strong>Duration:</strong> ${Math.floor(flight.duration_minutes/60)}h ${flight.duration_minutes%60}m &nbsp;|&nbsp;
+       <strong>Price:</strong> $${flight.price_per_seat} &nbsp;|&nbsp;
+       <strong>Seats left:</strong> ${flight.seats_available}`;
+    document.getElementById("m-name").value     = "";
+    document.getElementById("m-passport").value = "";
+    document.getElementById("m-seat").value     = "";
+    document.getElementById("booking-modal").classList.add("open");
+  }
+
+  function closeModal() {
+    document.getElementById("booking-modal").classList.remove("open");
+    selectedFlightId = null;
+  }
+
+  async function submitModalBooking() {
+    const name     = document.getElementById("m-name").value.trim();
+    const passport = document.getElementById("m-passport").value.trim();
+    const seat     = document.getElementById("m-seat").value.trim();
+    if (!name || !passport || !seat) { toast("Please fill all fields", "error"); return; }
+
+    try {
+      const res  = await fetch(`${API}/bookings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ flight_id: selectedFlightId, passenger_name: name, passport_number: passport, seat })
+      });
+      const data = await res.json();
+      if (!res.ok) { toast(data.detail || "Booking failed", "error"); return; }
+      closeModal();
+      toast(`✔ Booking confirmed! Ref: ${data.booking_reference}`, "success");
+      searchFlights();
+    } catch { toast("API error — is the backend running?", "error"); }
+  }
+
+  // ── Direct Book tab ────────────────────────────────────────────────────────
+  async function submitBooking() {
+    const flightId = parseInt(document.getElementById("b-flightid").value);
+    const name     = document.getElementById("b-name").value.trim();
+    const passport = document.getElementById("b-passport").value.trim();
+    const seat     = document.getElementById("b-seat").value.trim();
+
+    if (!flightId || !name || !passport || !seat) {
+      document.getElementById("book-result").innerHTML = errBox("Please fill all fields.");
+      return;
+    }
+
+    try {
+      const res  = await fetch(`${API}/bookings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ flight_id: flightId, passenger_name: name, passport_number: passport, seat })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        document.getElementById("book-result").innerHTML = errBox(data.detail);
+        return;
+      }
+
+      document.getElementById("book-result").innerHTML = `
+        <div class="card" style="border-color:#bbf7d0;background:var(--successbg);">
+          <div style="color:var(--success);font-weight:800;font-size:1rem;margin-bottom:10px;">✔ Booking Confirmed</div>
+          <div style="font-family:var(--mono);font-size:0.82rem;color:var(--sub);line-height:2;">
+            <strong>Reference:</strong> <span style="color:var(--accent);font-size:1rem;font-weight:700;">${data.booking_reference}</span><br>
+            <strong>Passenger:</strong> ${data.passenger_name}<br>
+            <strong>Seat:</strong> ${data.seat}<br>
+            <strong>Status:</strong> ${data.status}
+          </div>
+        </div>`;
+      toast(`✔ Booked! Ref: ${data.booking_reference}`, "success");
+    } catch {
+      document.getElementById("book-result").innerHTML = errBox("API error. Is backend running?");
+    }
+  }
+
+  // ── Find Bookings ──────────────────────────────────────────────────────────
+  async function findBookings() {
+    const name = document.getElementById("bs-name").value.trim();
+    const ref  = document.getElementById("bs-ref").value.trim();
+    const cont = document.getElementById("bookings-result");
+
+    if (!name && !ref) { toast("Enter a name or reference to search", "error"); return; }
+
+    cont.innerHTML = `<div class="loading">🔍 Looking up bookings...</div>`;
+
+    const params = new URLSearchParams();
+    if (name) params.append("passenger_name", name);
+    if (ref)  params.append("reference", ref);
+
+    try {
+      const res  = await fetch(`${API}/bookings?${params}`);
+      const data = await res.json();
+
+      if (!data.bookings || data.bookings.length === 0) {
+        cont.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No bookings found.<br>Try a different name or reference.</p></div>`;
+        return;
+      }
+
+      cont.innerHTML = `<div class="result-count">${data.bookings.length} booking(s) found</div>
+        <div class="flights-grid">${data.bookings.map(renderBooking).join("")}</div>`;
+    } catch { cont.innerHTML = errBox("API error"); }
+  }
+
+  function renderBooking(b) {
+    const dt   = b.departure_datetime ? new Date(b.departure_datetime) : null;
+    const time = dt ? dt.toLocaleString([], { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }) : "—";
+
+    return `
+    <div class="booking-card">
+      <div>
+        <div class="booking-ref">${b.reference}</div>
+        <div class="booking-passenger">${b.passenger_name}</div>
+        <div class="booking-detail">
+          ${b.origin || "?"} → ${b.destination || "?"} &nbsp;·&nbsp; ${b.airline || ""}<br>
+          Departs: ${time} &nbsp;·&nbsp; Seat: <strong style="color:var(--text)">${b.seat}</strong><br>
+          Passport: ${b.passport_number}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+        <span class="status-badge ${b.status === 'confirmed' ? 'status-confirmed' : 'status-cancelled'}">${b.status}</span>
+        ${b.status === "confirmed"
+          ? `<button class="btn btn-danger" style="font-size:0.72rem;padding:6px 12px;" onclick="quickCancel('${b.reference}')">✕ Cancel</button>`
+          : ""}
+      </div>
+    </div>`;
+  }
+
+  // ── Cancel ─────────────────────────────────────────────────────────────────
+  async function cancelBooking() {
+    const ref  = document.getElementById("c-ref").value.trim();
+    const cont = document.getElementById("cancel-result");
+
+    if (!ref) { toast("Enter a booking reference", "error"); return; }
+
+    try {
+      const res  = await fetch(`${API}/bookings/${encodeURIComponent(ref)}`, { method: "DELETE" });
+      const data = await res.json();
+
+      if (!res.ok) { cont.innerHTML = errBox(data.detail); return; }
+
+      cont.innerHTML = `
+        <div class="card" style="border-color:#fecaca;background:var(--dangerbg);">
+          <div style="color:var(--danger);font-weight:800;margin-bottom:6px;">✕ Booking Cancelled</div>
+          <div style="font-family:var(--mono);font-size:0.82rem;color:var(--sub);">
+            Reference <strong style="color:var(--text)">${data.reference}</strong> has been cancelled and the seat released.
+          </div>
+        </div>`;
+      toast("Booking cancelled successfully", "info");
+    } catch { cont.innerHTML = errBox("API error"); }
+  }
+
+  async function quickCancel(ref) {
+    if (!confirm(`Cancel booking ${ref}?`)) return;
+    document.getElementById("c-ref").value = ref;
+    switchTab("cancel");
+    await cancelBooking();
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function errBox(msg) {
+    return `<div class="card" style="border-color:#fecaca;background:var(--dangerbg);color:var(--danger);font-family:var(--mono);font-size:0.82rem;">⚠️ ${msg}</div>`;
+  }
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  document.addEventListener("DOMContentLoaded", () => searchFlights());
+  document.getElementById("booking-modal").addEventListener("click", function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>
+</body>
+</html>
